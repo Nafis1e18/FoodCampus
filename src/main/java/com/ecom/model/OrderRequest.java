@@ -25,4 +25,13 @@ public class OrderRequest {
 	
 	private String paymentType;
 
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
+    public String getEmail() { return email; }
+    public String getMobileNo() { return mobileNo; }
+    public String getAddress() { return address; }
+    public String getCity() { return city; }
+    public String getState() { return state; }
+    public String getPincode() { return pincode; }
+    public String getPaymentType() { return paymentType; }
 }

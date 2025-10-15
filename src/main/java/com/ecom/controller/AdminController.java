@@ -472,4 +472,30 @@ public class AdminController {
 		return "redirect:/admin/profile";
 	}
 
+	@GetMapping("/addProduct")
+	public String showAddProductForm(Model model) {
+		model.addAttribute("product", new Product());
+		return "admin/add_product";
+	}
+
+	@PostMapping("/addProduct")
+	public String addProduct(@ModelAttribute Product product,
+			@RequestParam("image") MultipartFile imageFile,
+			Model model) {
+		try {
+			if (!imageFile.isEmpty()) {
+				String imageName = imageFile.getOriginalFilename();
+				product.setImage(imageName);
+				String uploadDir = new ClassPathResource("static/img/product_img").getFile().getAbsolutePath();
+				Path path = Paths.get(uploadDir + File.separator + imageName);
+				Files.copy(imageFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+			}
+			productService.saveProduct(product);
+			model.addAttribute("message", "Product added successfully!");
+		} catch (IOException e) {
+			model.addAttribute("message", "Error uploading image.");
+		}
+		return "admin/add_product";
+	}
+
 }
