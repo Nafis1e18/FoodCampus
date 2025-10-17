@@ -203,8 +203,15 @@ public class AdminController {
 		String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
 
 		product.setImage(imageName);
-		product.setDiscount(0);
-		product.setDiscountPrice(product.getPrice());
+		// ensure product is active so regular users can see it
+		product.setIsActive(true);
+		// compute discount price from price and discount
+		double price = product.getPrice() == null ? 0.0 : product.getPrice();
+		int discount = product.getDiscount();
+		double discountAmount = price * (discount / 100.0);
+		double discountPrice = price - discountAmount;
+		product.setDiscountPrice(discountPrice);
+
 		Product saveProduct = productService.saveProduct(product);
 
 		if (!ObjectUtils.isEmpty(saveProduct)) {
@@ -480,16 +487,24 @@ public class AdminController {
 
 	@PostMapping("/addProduct")
 	public String addProduct(@ModelAttribute Product product,
-			@RequestParam("image") MultipartFile imageFile,
+			@RequestParam("file") MultipartFile image,
 			Model model) {
 		try {
-			if (!imageFile.isEmpty()) {
-				String imageName = imageFile.getOriginalFilename();
+			if (!image.isEmpty()) {
+				String imageName = image.getOriginalFilename();
 				product.setImage(imageName);
 				String uploadDir = new ClassPathResource("static/img/product_img").getFile().getAbsolutePath();
 				Path path = Paths.get(uploadDir + File.separator + imageName);
-				Files.copy(imageFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 			}
+			// ensure product is active so regular users can see it
+			product.setIsActive(true);
+			// compute discount price
+			double price = product.getPrice() == null ? 0.0 : product.getPrice();
+			int discount = product.getDiscount();
+			double discountAmount = price * (discount / 100.0);
+			double discountPrice = price - discountAmount;
+			product.setDiscountPrice(discountPrice);
 			productService.saveProduct(product);
 			model.addAttribute("message", "Product added successfully!");
 		} catch (IOException e) {

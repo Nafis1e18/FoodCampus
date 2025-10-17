@@ -28,6 +28,20 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Product saveProduct(Product product) {
+		// Ensure product has sensible defaults to avoid nulls causing NPEs elsewhere
+		double price = product.getPrice() == null ? 0.0 : product.getPrice();
+		int discount = product.getDiscount();
+
+		if (product.getDiscountPrice() == null) {
+			double discountAmount = price * (discount / 100.0);
+			double discountPrice = price - discountAmount;
+			product.setDiscountPrice(discountPrice);
+		}
+
+		if (product.getIsActive() == null) {
+			product.setIsActive(true);
+		}
+
 		return productRepository.save(product);
 	}
 

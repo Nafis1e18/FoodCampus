@@ -37,16 +37,18 @@ public class CartServiceImpl implements CartService {
 
 		Cart cart = null;
 
+		double unitPrice = getEffectivePrice(product);
+
 		if (ObjectUtils.isEmpty(cartStatus)) {
 			cart = new Cart();
 			cart.setProduct(product);
 			cart.setUser(userDtls);
 			cart.setQuantity(1);
-			cart.setTotalPrice(1 * product.getDiscountPrice());
+			cart.setTotalPrice(1 * unitPrice);
 		} else {
 			cart = cartStatus;
 			cart.setQuantity(cart.getQuantity() + 1);
-			cart.setTotalPrice(cart.getQuantity() * cart.getProduct().getDiscountPrice());
+			cart.setTotalPrice(cart.getQuantity() * getEffectivePrice(cart.getProduct()));
 		}
 		Cart saveCart = cartRepository.save(cart);
 
@@ -60,7 +62,8 @@ public class CartServiceImpl implements CartService {
 		Double totalOrderPrice = 0.0;
 		List<Cart> updateCarts = new ArrayList<>();
 		for (Cart c : carts) {
-			Double totalPrice = (c.getProduct().getDiscountPrice() * c.getQuantity());
+			double unitPrice = getEffectivePrice(c.getProduct());
+			Double totalPrice = (unitPrice * c.getQuantity());
 			c.setTotalPrice(totalPrice);
 			totalOrderPrice = totalOrderPrice + totalPrice;
 			c.setTotalOrderPrice(totalOrderPrice);
@@ -98,6 +101,29 @@ public class CartServiceImpl implements CartService {
 			cartRepository.save(cart);
 		}
 
+	}
+
+	/**
+	 * Return effective per-item price for a product. Prefer discountPrice if available,
+	 * otherwise compute from price and discount. Null-safe.
+	 */
+	private double getEffectivePrice(Product product) {
+		double price = product.getPrice() == null ? 0.0 : product.getPrice();
+		Integer discount = null;
+		try {
+			discount = product.getDiscount();
+		} catch (Exception e) {
+			discount = 0;
+		}
+
+		Double discountPrice = product.getDiscountPrice();
+		if (discountPrice != null) {
+			return discountPrice.doubleValue();
+		}
+
+		double disc = (discount == null) ? 0.0 : (discount / 100.0);
+		double computed = price - (price * disc);
+		return computed;
 	}
 
 }

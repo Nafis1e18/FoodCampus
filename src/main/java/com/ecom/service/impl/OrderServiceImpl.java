@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.ecom.model.Cart;
 import com.ecom.model.OrderAddress;
 import com.ecom.model.OrderRequest;
+import com.ecom.model.Product;
 import com.ecom.model.ProductOrder;
 import com.ecom.model.UserDtls;
 import com.ecom.repository.CartRepository;
@@ -48,7 +49,9 @@ public class OrderServiceImpl implements OrderService {
 			order.setOrderDate(LocalDate.now());
 
 			order.setProduct(cart.getProduct());
-			order.setPrice(cart.getProduct().getDiscountPrice());
+			// use helper to compute a safe unit price (prefers discountPrice, falls back to compute)
+			double unitPrice = getEffectivePrice(cart.getProduct());
+			order.setPrice(unitPrice);
 
 			order.setQuantity(cart.getQuantity());
 			order.setUser(cart.getUser());
@@ -73,6 +76,26 @@ public class OrderServiceImpl implements OrderService {
 			commonUtil.sendMailForProductOrder(saveOrder, "success");
 		}
 	}
+
+	private double getEffectivePrice(Product product) {
+		double price = product.getPrice() == null ? 0.0 : product.getPrice();
+		Integer discount = null;
+		try {
+			discount = product.getDiscount();
+		} catch (Exception e) {
+			discount = 0;
+		}
+
+		Double discountPrice = product.getDiscountPrice();
+		if (discountPrice != null) {
+			return discountPrice.doubleValue();
+		}
+
+		double disc = (discount == null) ? 0.0 : (discount / 100.0);
+		double computed = price - (price * disc);
+		return computed;
+	}
+
 	private void resetCart(UserDtls user) {
 		cartRepository.deleteByUser(user);
 	}

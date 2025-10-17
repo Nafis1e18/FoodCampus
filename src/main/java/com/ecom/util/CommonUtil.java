@@ -8,6 +8,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import com.ecom.model.Product;
 import com.ecom.model.ProductOrder;
 import com.ecom.model.UserDtls;
 import com.ecom.service.UserService;
@@ -54,7 +55,43 @@ public class CommonUtil {
 	
 	public Boolean sendMailForProductOrder(ProductOrder order,String status) throws Exception
 	{
-		
+		// build message template with safe values
+		String productName = "";
+		String category = "";
+		String quantity = "0";
+		String priceStr = "0.00";
+		String paymentType = "";
+		String customerName = "Customer";
+
+		if (order != null) {
+			if (order.getOrderAddress() != null && order.getOrderAddress().getFirstName() != null) {
+				customerName = order.getOrderAddress().getFirstName();
+			}
+			if (order.getProduct() != null) {
+				Product p = order.getProduct();
+				productName = p.getTitle() == null ? "" : p.getTitle();
+				category = p.getCategory() == null ? "" : p.getCategory();
+				// determine price: prefer order.price, then product.discountPrice, then compute
+				double computedPrice = 0.0;
+				if (order.getPrice() != null) {
+					computedPrice = order.getPrice();
+				} else if (p.getDiscountPrice() != null) {
+					computedPrice = p.getDiscountPrice();
+				} else if (p.getPrice() != null) {
+					Integer disc = p.getDiscount();
+					double discVal = (disc == null) ? 0.0 : (disc / 100.0);
+					computedPrice = p.getPrice() - (p.getPrice() * discVal);
+				}
+				priceStr = String.format("%.2f", computedPrice);
+			}
+			if (order.getQuantity() != null) {
+				quantity = order.getQuantity().toString();
+			}
+			if (order.getPaymentType() != null) {
+				paymentType = order.getPaymentType();
+			}
+		}
+
 		msg="<p>Hello [[name]],</p>"
 				+ "<p>Thank you order <b>[[orderStatus]]</b>.</p>"
 				+ "<p><b>Product Details:</b></p>"
@@ -68,16 +105,21 @@ public class CommonUtil {
 		MimeMessageHelper helper = new MimeMessageHelper(message);
 
 		helper.setFrom("nirobnafis3@gmail.com", "Nafis");
-		helper.setTo(order.getOrderAddress().getEmail());
+		if (order != null && order.getOrderAddress() != null && order.getOrderAddress().getEmail() != null) {
+			helper.setTo(order.getOrderAddress().getEmail());
+		} else {
+			// if no recipient, return false gracefully
+			return false;
+		}
 
-		msg=msg.replace("[[name]]",order.getOrderAddress().getFirstName());
-		msg=msg.replace("[[orderStatus]]",status);
-		msg=msg.replace("[[productName]]", order.getProduct().getTitle());
-		msg=msg.replace("[[category]]", order.getProduct().getCategory());
-		msg=msg.replace("[[quantity]]", order.getQuantity().toString());
-		msg=msg.replace("[[price]]", order.getPrice().toString());
-		msg=msg.replace("[[paymentType]]", order.getPaymentType());
-		
+		msg=msg.replace("[[name]]",customerName);
+		msg=msg.replace("[[orderStatus]]",status == null ? "" : status);
+		msg=msg.replace("[[productName]]", productName);
+		msg=msg.replace("[[category]]", category);
+		msg=msg.replace("[[quantity]]", quantity);
+		msg=msg.replace("[[price]]", priceStr);
+		msg=msg.replace("[[paymentType]]", paymentType);
+
 		helper.setSubject("Product Order Status");
 		helper.setText(msg, true);
 		mailSender.send(message);
