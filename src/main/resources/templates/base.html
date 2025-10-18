@@ -51,7 +51,10 @@
 					<li class="nav-item"><a class="nav-link active"
 						aria-current="page" href="/products">Product</a></li>
 
-					<li class="nav-item dropdown"><a
+				<!-- Locate Us nav item: opens a modal with Google Maps iframe -->
+				<li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#locateUsModal">Locate Us</a></li>
+
+				<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" role="button"
 						data-bs-toggle="dropdown" aria-expanded="false"> Category </a>
 						<ul class="dropdown-menu">
@@ -119,6 +122,24 @@
 		<p>FoodCampus.com</p>
 	</div>
 	<!-- End Footer  -->
+
+	<!-- Locate Us Modal -->
+	<div class="modal fade" id="locateUsModal" tabindex="-1" aria-labelledby="locateUsModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="locateUsModalLabel">Locate Us</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body p-0">
+					<div class="ratio ratio-16x9">
+						<!-- Embedded map for Mawlana Bhashani Science and Technology University -->
+						<iframe src="https://maps.google.com/maps?q=24.235713,89.8905835&z=15&output=embed" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- Jquery Validation Library  -->
 	<script
