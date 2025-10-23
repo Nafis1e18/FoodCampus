@@ -1,121 +1,271 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:replace="~{base::layout(~{::section})}">
+	  th:replace="~{base::layout(~{::section})}">
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+	<meta charset="ISO-8859-1">
+	<title>Products - FoodCampus</title>
 </head>
 <body>
-	<section>
-	
-		<div class="container-fluid bg-primary p-4 mt-5 ">
-			<div class="row">
-				<div class="col-md-8 offset-md-2">
-					<form action="/products" method="get">
-						<div class="input-group">
-							<input type="text" class="form-control" name="ch">
-							<button class="btn btn-light text-dark ms-3 col-md-2">
-								<i class="fa-solid fa-magnifying-glass"></i> Search
-							</button>
-						</div>
-					</form>
+<section>
+
+	<!-- Enhanced Search Bar with Gradient Background -->
+	<div class="container-fluid p-5 mt-5"
+		 style="background: linear-gradient(135deg, #606c88 0%, #3f4c6b 100%); box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
+		<div class="row">
+			<div class="col-md-8 offset-md-2">
+				<div class="text-center mb-3">
+					<h2 style="color: white; font-weight: bold; font-size: 2rem;">
+						<i class="fa-solid fa-search"></i> Find Your Perfect Meal
+					</h2>
+					<p style="color: rgba(255,255,255,0.9); font-size: 1.1rem;">Search from our delicious collection</p>
 				</div>
+				<form action="/products" method="get">
+					<div class="input-group" style="box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+						<input type="text"
+							   class="form-control form-control-lg"
+							   name="ch"
+							   placeholder="Search for food, category, or cuisine..."
+							   style="border: none; padding: 15px 20px; font-size: 1.1rem; border-radius: 50px 0 0 50px;">
+						<button class="btn btn-light btn-lg px-4"
+								style="border: none; font-weight: 600; border-radius: 0 50px 50px 0; transition: all 0.3s ease;"
+								onmouseover="this.style.background='#ffc107'; this.style.color='white';"
+								onmouseout="this.style.background='#f8f9fa'; this.style.color='#212529';">
+							<i class="fa-solid fa-magnifying-glass"></i> Search
+						</button>
+					</div>
+				</form>
 			</div>
-
 		</div>
+	</div>
 
+	<!-- Main Content Area -->
+	<div class="container-fluid mt-4 mb-5">
+		<div class="row">
 
-		<div class="container-fluid mt-1">
-			<div class="row">
+			<!-- Sidebar - Category Filter -->
+			<div class="col-md-2 p-3">
+				<div class="card shadow-lg border-0"
+					 style="border-radius: 15px; position: sticky; top: 80px; overflow: hidden;">
+					<div class="card-header text-white text-center"
+						 style="background: linear-gradient(135deg, #606c88 0%, #3f4c6b 100%); border: none; padding: 20px;">
+						<h5 style="margin: 0; font-weight: bold;">
+							<i class="fa-solid fa-filter"></i> Filter by Category
+						</h5>
+					</div>
+					<div class="card-body p-0">
+						<div class="list-group list-group-flush">
+							<a href="/products"
+							   th:classappend="${paramValue==''} ? 'active':''"
+							   class="list-group-item list-group-item-action"
+							   style="border: none; padding: 15px 20px; transition: all 0.3s ease; font-weight: 500;"
+							   onmouseover="if(!this.classList.contains('active')) {this.style.background='#f8f9fa'; this.style.paddingLeft='30px';}"
+							   onmouseout="if(!this.classList.contains('active')) {this.style.background='white'; this.style.paddingLeft='20px';}">
+								<i class="fa-solid fa-border-all"></i> All Products
+							</a>
 
-				<div class="col-md-2 p-0">
-
-					<div class="card shadow-sm p-0 mb-5 bg-body-tertiary rounded">
-						<div class="card-body">
-							<div class="list-group">
-								<p class="fs-5">Category</p>
-								<a href="/products"
-									th:classappend="${paramValue==''} ? 'active':''"
-									class="list-group-item list-group-item-action"
-									aria-current="true"> All </a> <a th:each="c:${categories}"
-									th:href="@{'/products?category='+${c.name}}"
-									th:classappend="${paramValue == c.name} ? 'active':''"
-									class="list-group-item list-group-item-action">[[${c.name}]]</a>
-							</div>
+							<a th:each="c:${categories}"
+							   th:href="@{'/products?category='+${c.name}}"
+							   th:classappend="${paramValue == c.name} ? 'active':''"
+							   class="list-group-item list-group-item-action"
+							   style="border: none; padding: 15px 20px; transition: all 0.3s ease; font-weight: 500;"
+							   onmouseover="if(!this.classList.contains('active')) {this.style.background='#f8f9fa'; this.style.paddingLeft='30px';}"
+							   onmouseout="if(!this.classList.contains('active')) {this.style.background='white'; this.style.paddingLeft='20px';}">
+								<i class="fa-solid fa-chevron-right"></i> [[${c.name}]]
+							</a>
 						</div>
 					</div>
 				</div>
-				<div class="col-md-10">
-					<div class="card">
-						<div class="card-body">
-							<p class="fs-3 text-center">Products</p>
-							<div class="row">
+			</div>
 
-								<th:block th:if="${productsSize >0}">
-									<div class="col-md-3 mt-2" th:each="p:${products}">
-										<div class="card card-sh">
-											<div class="card-body text-center">
-												<img alt="" th:src="@{'/img/product_img/'+${p.image}}"
-													width="150px" height="150px">
-												<p class="fs-5 text-center">[[${p.title}]]</p>
-												<div class="row text-center">
-													<p class="fs-6 fw-bold ">
-														<span><th:block th:utext="${@commnServiceImpl.rupeeSign()}"></th:block> [[${p.discountPrice}]]</span> <br> <span
-															class="text-decoration-line-through text-secondary"><th:block th:utext="${@commnServiceImpl.rupeeSign()}"></th:block>
-															[[${p.price}]]</span> <span class="fs-6 text-success">[[${p.discount}]]%
-															off </span>
-													</p>
-													<a th:href="@{'/product/'+${p.id}}"
-														class="btn btn-primary col-md-6 offset-md-3">View
-														Details</a>
-												</div>
+			<!-- Products Grid -->
+			<div class="col-md-10 p-3">
+				<div class="card shadow-lg border-0" style="border-radius: 15px;">
+					<div class="card-header text-white text-center"
+						 style="background: linear-gradient(135deg, #606c88 0%, #3f4c6b 100%); border: none; padding: 20px; border-radius: 15px 15px 0 0;">
+						<h3 style="margin: 0; font-weight: bold;">
+							<i class="fa-solid fa-utensils"></i> Our Products
+						</h3>
+						<p style="margin: 5px 0 0 0; font-size: 1rem; opacity: 0.9;">Discover delicious meals crafted with love</p>
+					</div>
+
+					<div class="card-body p-4" style="background: #f8f9fa; border-radius: 0 0 15px 15px;">
+						<div class="row">
+
+							<!-- Product Cards -->
+							<th:block th:if="${productsSize > 0}">
+								<div class="col-lg-3 col-md-4 col-sm-6 mb-4" th:each="p:${products}">
+									<div class="card h-100 border-0 shadow-sm"
+										 style="border-radius: 15px; overflow: hidden; transition: all 0.3s ease; background: white;"
+										 onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 35px rgba(0,0,0,0.2)';"
+										 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 .125rem .25rem rgba(0,0,0,.075)';">
+
+										<div class="card-body text-center p-3">
+											<!-- Product Image with Overlay -->
+											<div style="position: relative; overflow: hidden; border-radius: 10px; margin-bottom: 15px; background: #f8f9fa;">
+												<img alt="[[${p.title}]]"
+													 th:src="@{'/img/product_img/'+${p.image}}"
+													 width="100%"
+													 height="180px"
+													 style="object-fit: cover; transition: transform 0.5s ease; padding: 10px;"
+													 onmouseover="this.style.transform='scale(1.15)';"
+													 onmouseout="this.style.transform='scale(1)';">
+
+												<!-- Discount Badge -->
+												<span class="badge position-absolute top-0 end-0 m-2"
+													  th:if="${p.discount > 0}"
+													  style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); font-size: 0.9rem; padding: 8px 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.3);">
+                                           <i class="fa-solid fa-fire"></i> [[${p.discount}]]% OFF
+                                        </span>
 											</div>
+
+											<!-- Product Title -->
+											<h6 class="fw-bold mb-3"
+												style="color: #333; font-size: 1.1rem; min-height: 50px; display: flex; align-items: center; justify-content: center;">
+												[[${p.title}]]
+											</h6>
+
+											<!-- Price Section -->
+											<div class="mb-3">
+												<div class="d-flex justify-content-center align-items-center gap-2">
+                                           <span class="fw-bold text-primary" style="font-size: 1.5rem;">
+                                              <th:block th:utext="${@commnServiceImpl.rupeeSign()}"></th:block> [[${p.discountPrice}]]
+                                           </span>
+													<span class="text-decoration-line-through text-muted" style="font-size: 1rem;">
+                                              <th:block th:utext="${@commnServiceImpl.rupeeSign()}"></th:block> [[${p.price}]]
+                                           </span>
+												</div>
+												<span class="badge bg-success mt-1" style="font-size: 0.85rem; padding: 5px 10px;">
+                                           Save <th:block th:utext="${@commnServiceImpl.rupeeSign()}"></th:block> [[${p.price - p.discountPrice}]]
+                                        </span>
+											</div>
+
+											<!-- View Details Button -->
+											<a th:href="@{'/product/'+${p.id}}"
+											   class="btn btn-primary w-100"
+											   style="border-radius: 25px; padding: 10px; font-weight: 600; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: all 0.3s ease;"
+											   onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 5px 15px rgba(102, 126, 234, 0.4)';"
+											   onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+												<i class="fa-solid fa-eye"></i> View Details
+											</a>
 										</div>
 									</div>
-								</th:block>
-								<th:block th:unless="${productsSize>0}">
-									<p class="fs-4 text-center mt-4 text-danger">Product not
-										available</p>
-								</th:block>
-							</div>
+								</div>
+							</th:block>
 
+							<!-- No Products Found -->
+							<th:block th:unless="${productsSize>0}">
+								<div class="col-12">
+									<div class="text-center py-5">
+										<i class="fa-solid fa-box-open fa-5x text-muted mb-4" style="opacity: 0.3;"></i>
+										<h4 class="text-danger fw-bold mb-3">No Products Available</h4>
+										<p class="text-muted mb-4">We couldn't find any products matching your search. Try different keywords or browse all categories.</p>
+										<a href="/products"
+										   class="btn btn-primary btn-lg"
+										   style="border-radius: 25px; padding: 12px 40px; font-weight: 600; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+											<i class="fa-solid fa-arrow-left"></i> Back to All Products
+										</a>
+									</div>
+								</div>
+							</th:block>
 						</div>
 					</div>
-					<!-- Start Pagination -->
-					<div class="row">
-						<div class="col-md-4">Total Products : [[${totalElements}]]</div>
-						<div class="col-md-6">
-							<th:block th:if="${productsSize>0}">
-								<nav aria-label="Page navigation example">
-									<ul class="pagination">
-										<li class="page-item"
-											th:classappend="${isFirst} ? 'disabled':''"><a
-											class="page-link"
-											th:href="@{'/products?pageNo='+${pageNo-1}}"
-											aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-										</a></li>
-
-										<li th:each="i:${#numbers.sequence(1,totalPages)}"
-											class="page-item" th:classappend="${pageNo+1==i}?'active':''"
-											]]><a class="page-link"
-											th:href="@{'/products?pageNo='+${i-1}}">[[${i}]]</a></li>
-
-										<li class="page-item"
-											th:classappend="${isLast} ? 'disabled':''"><a
-											class="page-link"
-											th:href="@{'/products?pageNo='+${pageNo+1}}"
-											aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-										</a></li>
-									</ul>
-								</nav>
-						</div>
-						</th:block>
-					</div>
-
 				</div>
+
+				<!-- Pagination Section -->
+				<th:block th:if="${productsSize>0}">
+					<div class="card shadow-sm border-0 mt-4" style="border-radius: 15px;">
+						<div class="card-body p-4">
+							<div class="row align-items-center">
+								<!-- Total Products Info -->
+								<div class="col-md-4">
+									<div class="d-flex align-items-center gap-2">
+                                  <span class="badge bg-primary"
+										style="font-size: 1rem; padding: 10px 15px; border-radius: 10px;">
+                                     <i class="fa-solid fa-box"></i> [[${totalElements}]]
+                                  </span>
+										<span class="text-muted fw-bold">Total Products</span>
+									</div>
+								</div>
+
+								<!-- Pagination Controls -->
+								<div class="col-md-8">
+									<nav aria-label="Page navigation">
+										<ul class="pagination justify-content-end mb-0" style="gap: 5px;">
+											<!-- Previous Button -->
+											<li class="page-item" th:classappend="${isFirst} ? 'disabled':''">
+												<a class="page-link"
+												   th:href="@{'/products?pageNo='+${pageNo-1}}"
+												   aria-label="Previous"
+												   style="border: none; border-radius: 10px; padding: 10px 15px; margin-right: 5px; background: #f8f9fa; color: #667eea; font-weight: 600; transition: all 0.3s ease;"
+												   onmouseover="if(!this.parentElement.classList.contains('disabled')) {this.style.background='#667eea'; this.style.color='white';}"
+												   onmouseout="if(!this.parentElement.classList.contains('disabled')) {this.style.background='#f8f9fa'; this.style.color='#667eea';}">
+													<i class="fa-solid fa-chevron-left"></i> Previous
+												</a>
+											</li>
+
+											<!-- Page Numbers -->
+											<li th:each="i:${#numbers.sequence(1,totalPages)}"
+												class="page-item"
+												th:classappend="${pageNo+1==i}?'active':''">
+												<a class="page-link"
+												   th:href="@{'/products?pageNo='+${i-1}}"
+												   th:text="${i}"
+												   style="border: none; border-radius: 10px; padding: 10px 15px; transition: all 0.3s ease;"
+												   th:style="${pageNo+1==i} ? 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: bold;' : 'background: #f8f9fa; color: #667eea; font-weight: 600;'"
+												   onmouseover="if(!this.parentElement.classList.contains('active')) {this.style.background='#667eea'; this.style.color='white';}"
+												   onmouseout="if(!this.parentElement.classList.contains('active')) {this.style.background='#f8f9fa'; this.style.color='#667eea';}">
+												</a>
+											</li>
+
+											<!-- Next Button -->
+											<li class="page-item" th:classappend="${isLast} ? 'disabled':''">
+												<a class="page-link"
+												   th:href="@{'/products?pageNo='+${pageNo+1}}"
+												   aria-label="Next"
+												   style="border: none; border-radius: 10px; padding: 10px 15px; margin-left: 5px; background: #f8f9fa; color: #667eea; font-weight: 600; transition: all 0.3s ease;"
+												   onmouseover="if(!this.parentElement.classList.contains('disabled')) {this.style.background='#667eea'; this.style.color='white';}"
+												   onmouseout="if(!this.parentElement.classList.contains('disabled')) {this.style.background='#f8f9fa'; this.style.color='#667eea';}">
+													Next <i class="fa-solid fa-chevron-right"></i>
+												</a>
+											</li>
+										</ul>
+									</nav>
+								</div>
+							</div>
+						</div>
+					</div>
+				</th:block>
+
 			</div>
 		</div>
+	</div>
 
-	</section>
+	<!-- Custom CSS for Active State -->
+	<style>
+		.list-group-item.active {
+			background: linear-gradient(135deg, #606c88 0%, #3f4c6b 100%) !important;
+			color: white !important;
+			border: none !important;
+			font-weight: bold !important;
+			padding-left: 30px !important;
+		}
+
+		.list-group-item.active i {
+			transform: rotate(90deg);
+		}
+
+		/* Smooth Page Transitions */
+		.page-item.active .page-link {
+			border: none !important;
+		}
+
+		/* Search Input Focus Effect */
+		.form-control:focus {
+			box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25) !important;
+			border-color: #667eea !important;
+		}
+	</style>
+
+</section>
 </body>
 </html>

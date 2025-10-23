@@ -1,163 +1,388 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:fragment="layout(content)">
+	  th:fragment="layout(content)">
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-	rel="stylesheet"
-	integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-	crossorigin="anonymous">
+	<meta charset="ISO-8859-1">
+	<title>FoodCampus Store</title>
+	<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+			crossorigin="anonymous">
 
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-	integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-	crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet"
+		  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+		  integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+		  crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/style.css">
+
+	<style>
+		/* Enhanced Modal Styles */
+		.location-btn-group .btn {
+			transition: all 0.3s ease;
+		}
+		.location-btn-group .btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+		}
+		.location-info {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			padding: 15px;
+			border-radius: 10px;
+			margin-bottom: 15px;
+		}
+	</style>
 </head>
 <body>
-	<!-- Start Navbar  -->
-	<nav class="navbar navbar-expand-lg  bg-primary fixed-top navbar-dark">
-		<div class="container-fluid">
-			<a class="navbar-brand" href="#"><i class="fa-solid fa-hamburger me-2"></i> FoodCampus Store</a>
-			<button class="navbar-toggler" type="button"
+<!-- Start Navbar  -->
+<nav class="navbar navbar-expand-lg bg-primary fixed-top navbar-dark">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="#"><i class="fa-solid fa-hamburger me-2"></i> FoodCampus Store</a>
+		<button class="navbar-toggler" type="button"
 				data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
 				aria-controls="navbarSupportedContent" aria-expanded="false"
 				aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-					<th:block th:if="${user==null}">
-						<li class="nav-item"><a class="nav-link active"
-							aria-current="page" href="/"><i class="fa-solid fa-house"></i>
-								Home</a></li>
-					</th:block>
-
-					<th:block th:unless="${user==null}">
-						<li class="nav-item" th:if="${user.role=='ROLE_ADMIN'}"><a
-							class="nav-link active" aria-current="page" href="/admin/"><i
-								class="fa-solid fa-house"></i> Home</a></li>
-
-						<li class="nav-item" th:if="${user.role=='ROLE_USER'}"><a
-							class="nav-link active" aria-current="page" href="/"><i
-								class="fa-solid fa-house"></i> Home</a></li>
-					</th:block>
-
-
-
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<th:block th:if="${user==null}">
 					<li class="nav-item"><a class="nav-link active"
-						aria-current="page" href="/products">Product</a></li>
+											aria-current="page" href="/"><i class="fa-solid fa-house"></i>
+						Home</a></li>
+				</th:block>
 
-				<!-- Locate Us nav item: opens a modal with Google Maps iframe -->
-				<li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#locateUsModal">Locate Us</a></li>
-					<li class="nav-item">
-						<a class="nav-link btn btn-warning text-dark mx-2 px-3"
-						   href="/recommendations/suggest-me"
-						   style="border-radius: 20px; font-weight: bold;">
-							? Suggest Me
-						</a>
-					</li>
+				<th:block th:unless="${user==null}">
+					<li class="nav-item" th:if="${user.role=='ROLE_ADMIN'}"><a
+							class="nav-link active" aria-current="page" href="/admin/"><i
+							class="fa-solid fa-house"></i> Home</a></li>
+
+					<li class="nav-item" th:if="${user.role=='ROLE_USER'}"><a
+							class="nav-link active" aria-current="page" href="/"><i
+							class="fa-solid fa-house"></i> Home</a></li>
+				</th:block>
+
+				<li class="nav-item"><a class="nav-link active"
+										aria-current="page" href="/products"><i class="fa-solid fa-utensils"></i> Product</a></li>
+
+				<!-- Enhanced Locate Us button with onclick -->
+				<li class="nav-item">
+					<a class="nav-link"
+					   href="#"
+					   onclick="openLocationModal()"
+					   style="cursor: pointer;">
+						<i class="fa-solid fa-location-dot"></i> Locate Us
+					</a>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link btn btn-warning text-dark mx-2 px-3"
+					   href="/recommendations/suggest-me"
+					   style="border-radius: 20px; font-weight: bold;">
+						<i class="fa-solid fa-quote-left"></i> Suggest Me
+					</a>
+				</li>
+
 				<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" role="button"
 						data-bs-toggle="dropdown" aria-expanded="false"> Category </a>
-						<ul class="dropdown-menu">
-							<li th:each="c:${categorys}"><a class="dropdown-item"
-								th:href="@{'/products?category='+${c.name}}">[[${c.name}]]</a></li>
+					<ul class="dropdown-menu">
+						<li th:each="c:${categorys}"><a class="dropdown-item"
+														th:href="@{'/products?category='+${c.name}}">[[${c.name}]]</a></li>
+					</ul>
+				</li>
+			</ul>
 
-						</ul></li>
+			<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+				<th:block th:if="${user==null}">
+					<li class="nav-item"><a class="nav-link active"
+											aria-current="page" href="/signin"><i
+							class="fa-solid fa-right-to-bracket"></i> LOGIN</a></li>
+					<li class="nav-item"><a class="nav-link active"
+											aria-current="page" href="/register">REGISTER</a></li>
+				</th:block>
 
-				</ul>
-
-				<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-					<th:block th:if="${user==null}">
+				<th:block th:if="${user!=null}">
+					<th:block th:if="${user.role=='ROLE_USER'}">
 						<li class="nav-item"><a class="nav-link active"
-							aria-current="page" href="/signin"><i
-								class="fa-solid fa-right-to-bracket"></i> LOGIN</a></li>
-						<li class="nav-item"><a class="nav-link active"
-							aria-current="page" href="/register">REGISTER</a></li>
-
-
+												aria-current="page" href="/user/cart"><i
+								class="fa-solid fa-cart-shopping"></i> Cart [ [[${countCart}]]
+							]</a></li>
 					</th:block>
-
-					<th:block th:if="${user!=null}">
-						<th:block th:if="${user.role=='ROLE_USER'}">
-							<li class="nav-item"><a class="nav-link active"
-								aria-current="page" href="/user/cart"><i
-									class="fa-solid fa-cart-shopping"></i> Cart [ [[${countCart}]]
-									]</a></li>
-						</th:block>
-						<li class="nav-item dropdown"><a
+					<li class="nav-item dropdown"><a
 							class="nav-link dropdown-toggle active" href="#" role="button"
 							data-bs-toggle="dropdown" aria-expanded="false"> <i
-								class="fa-solid fa-user"></i> [[${user.name}]]
-						</a>
-							<ul class="dropdown-menu">
-								<li th:if="${user.role=='ROLE_USER'}"><a
+							class="fa-solid fa-user"></i> [[${user.name}]]
+					</a>
+						<ul class="dropdown-menu">
+							<li th:if="${user.role=='ROLE_USER'}"><a
 									class="dropdown-item" href="/user/profile">Profile</a></li>
-
-								<li th:if="${user.role=='ROLE_ADMIN'}"><a
+							<li th:if="${user.role=='ROLE_ADMIN'}"><a
 									class="dropdown-item" href="/admin/profile">Profile</a></li>
-
-								<li th:if="${user.role=='ROLE_USER'}"><a
+							<li th:if="${user.role=='ROLE_USER'}"><a
 									class="dropdown-item" href="/user/user-orders">My Orders</a></li>
-								<li><a class="dropdown-item" href="/logout">Logout</a></li>
-								<li><hr class="dropdown-divider"></li>
-
-							</ul></li>
-
-						<!-- <li class="nav-item"><a class="nav-link active"
-							aria-current="page" href="/logout"><i
-								class="fa-solid fa-right-to-bracket"></i> Logout</a></li> -->
-					</th:block>
-
-				</ul>
-
-			</div>
-		</div>
-	</nav>
-	<!-- End Navbar -->
-
-	<div th:replace="${content}"></div>
-
-	<!-- Start Footer -->
-	<div class="container-fluid p-1 bg-primary text-center text-white"
-		style="margin-top: 250px">
-		<p>FoodCampus.com</p>
-	</div>
-	<!-- End Footer  -->
-
-	<!-- Locate Us Modal -->
-	<div class="modal fade" id="locateUsModal" tabindex="-1" aria-labelledby="locateUsModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-lg modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="locateUsModalLabel">Locate Us</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body p-0">
-					<div class="ratio ratio-16x9">
-						<!-- Embedded map for Mawlana Bhashani Science and Technology University -->
-						<iframe src="https://maps.google.com/maps?q=24.235713,89.8905835&z=15&output=embed" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-					</div>
-				</div>
-			</div>
+							<li><a class="dropdown-item" href="/logout">Logout</a></li>
+							<li><hr class="dropdown-divider"></li>
+						</ul>
+					</li>
+				</th:block>
+			</ul>
 		</div>
 	</div>
+</nav>
+<!-- End Navbar -->
 
-	<!-- Jquery Validation Library  -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
-	<script type="text/javascript" src="js/script.js"></script>
-	<script type="text/javascript" src="../js/script.js"></script>
-	<!-- End  -->
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+<div th:replace="${content}"></div>
+
+<!-- Start Footer -->
+<div class="container-fluid p-1 bg-primary text-center text-white"
+	 style="margin-top: 250px">
+	<p>FoodCampus.com</p>
+</div>
+<!-- End Footer  -->
+
+<!-- Enhanced Locate Us Modal with Navigation -->
+<div class="modal fade" id="locateUsModal" tabindex="-1" aria-labelledby="locateUsModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+				<h5 class="modal-title" id="locateUsModalLabel">
+					<i class="fa-solid fa-location-dot"></i> Find FoodCampus
+				</h5>
+				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+
+				<!-- Location Information -->
+				<div class="location-info text-center">
+					<h5><i class="fa-solid fa-building"></i> Mawlana Bhashani Science & Technology University</h5>
+					<p class="mb-2"><i class="fa-solid fa-map-pin"></i> Santosh, Tangail, Bangladesh</p>
+					<p class="mb-0"><i class="fa-solid fa-phone"></i> Contact: +880-XXXX-XXXXXX</p>
+				</div>
+
+				<!-- User Location Status -->
+				<div id="locationStatus" class="alert alert-info text-center" style="display: none;">
+					<i class="fa-solid fa-spinner fa-spin"></i> Detecting your location...
+				</div>
+
+				<!-- Navigation Buttons -->
+				<div class="location-btn-group d-grid gap-2 mb-3">
+					<!-- Get Directions Button (Opens Google Maps with directions) -->
+					<button class="btn btn-primary btn-lg"
+							onclick="getDirections()"
+							id="directionsBtn"
+							style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+						<i class="fa-solid fa-route"></i> Get Directions from My Location
+					</button>
+
+					<!-- Open in Google Maps -->
+					<button class="btn btn-success btn-lg" onclick="openInGoogleMaps()">
+						<i class="fa-brands fa-google"></i> Open in Google Maps
+					</button>
+
+					<!-- Call Now Button -->
+					<a href="tel:+8801XXXXXXXXX" class="btn btn-warning btn-lg">
+						<i class="fa-solid fa-phone"></i> Call Now
+					</a>
+				</div>
+
+				<!-- Embedded Map -->
+				<div class="ratio ratio-16x9" style="border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+					<iframe id="mapIframe"
+							src="https://maps.google.com/maps?q=24.235713,89.8905835&z=15&output=embed"
+							style="border:0;"
+							allowfullscreen=""
+							loading="lazy"
+							referrerpolicy="no-referrer-when-downgrade">
+					</iframe>
+				</div>
+
+				<!-- Distance Info (will be populated) -->
+				<div id="distanceInfo" class="alert alert-success text-center mt-3" style="display: none;">
+					<i class="fa-solid fa-car"></i> <strong>Distance:</strong> <span id="distance"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Jquery Validation Library  -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+<script type="text/javascript" src="../js/script.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
 		crossorigin="anonymous"></script>
+
+<!-- Location Navigation JavaScript -->
+<script>
+	// Restaurant location coordinates
+	const RESTAURANT_LAT = 24.235713;
+	const RESTAURANT_LNG = 89.8905835;
+
+	let userLocation = null;
+	let locateUsModal = null;
+
+	// Initialize modal on page load
+	document.addEventListener('DOMContentLoaded', function() {
+		locateUsModal = new bootstrap.Modal(document.getElementById('locateUsModal'));
+	});
+
+	/**
+	 * Open location modal and get user's location
+	 */
+	function openLocationModal() {
+		// Show the modal
+		locateUsModal.show();
+
+		// Try to get user's location
+		getUserLocation();
+	}
+
+	/**
+	 * Get user's current location using browser Geolocation API
+	 */
+	function getUserLocation() {
+		const statusDiv = document.getElementById('locationStatus');
+
+		if (navigator.geolocation) {
+			statusDiv.style.display = 'block';
+			statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Detecting your location...';
+
+			navigator.geolocation.getCurrentPosition(
+					// Success callback
+					function(position) {
+						userLocation = {
+							lat: position.coords.latitude,
+							lng: position.coords.longitude
+						};
+
+						statusDiv.className = 'alert alert-success text-center';
+						statusDiv.innerHTML = '<i class="fa-solid fa-check-circle"></i> Your location detected successfully!';
+
+						// Calculate and show distance
+						calculateDistance();
+
+						// Update map to show route
+						updateMapWithRoute();
+
+						// Auto-hide status after 3 seconds
+						setTimeout(() => {
+							statusDiv.style.display = 'none';
+						}, 3000);
+					},
+					// Error callback
+					function(error) {
+						let errorMsg = '';
+						switch(error.code) {
+							case error.PERMISSION_DENIED:
+								errorMsg = "Location access denied. Please enable location permissions in your browser settings.";
+								break;
+							case error.POSITION_UNAVAILABLE:
+								errorMsg = "Location information unavailable.";
+								break;
+							case error.TIMEOUT:
+								errorMsg = "Location request timed out.";
+								break;
+							default:
+								errorMsg = "An unknown error occurred.";
+						}
+
+						statusDiv.className = 'alert alert-warning text-center';
+						statusDiv.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i> ' + errorMsg + ' <br><small>You can still view our location on the map below.</small>';
+
+						// Keep showing the warning
+						statusDiv.style.display = 'block';
+					},
+					// Options
+					{
+						enableHighAccuracy: true,
+						timeout: 10000,
+						maximumAge: 0
+					}
+			);
+		} else {
+			statusDiv.className = 'alert alert-danger text-center';
+			statusDiv.innerHTML = '<i class="fa-solid fa-times-circle"></i> Geolocation is not supported by your browser.';
+			statusDiv.style.display = 'block';
+		}
+	}
+
+	/**
+	 * Calculate distance between user and restaurant
+	 */
+	function calculateDistance() {
+		if (!userLocation) return;
+
+		const R = 6371; // Earth's radius in km
+		const dLat = toRad(RESTAURANT_LAT - userLocation.lat);
+		const dLon = toRad(RESTAURANT_LNG - userLocation.lng);
+
+		const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+				Math.cos(toRad(userLocation.lat)) * Math.cos(toRad(RESTAURANT_LAT)) *
+				Math.sin(dLon/2) * Math.sin(dLon/2);
+
+		const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+		const distance = R * c;
+
+		// Display distance
+		const distanceDiv = document.getElementById('distanceInfo');
+		const distanceSpan = document.getElementById('distance');
+
+		if (distance < 1) {
+			distanceSpan.textContent = (distance * 1000).toFixed(0) + ' meters from you';
+		} else {
+			distanceSpan.textContent = distance.toFixed(2) + ' km from you';
+		}
+
+		distanceDiv.style.display = 'block';
+	}
+
+	/**
+	 * Convert degrees to radians
+	 */
+	function toRad(degrees) {
+		return degrees * Math.PI / 180;
+	}
+
+	/**
+	 * Update map to show route from user location to restaurant
+	 */
+	function updateMapWithRoute() {
+		if (!userLocation) return;
+
+		const mapIframe = document.getElementById('mapIframe');
+		// Show directions on the embedded map
+		const directionsUrl = `https://maps.google.com/maps?saddr=${userLocation.lat},${userLocation.lng}&daddr=${RESTAURANT_LAT},${RESTAURANT_LNG}&output=embed`;
+		mapIframe.src = directionsUrl;
+	}
+
+	/**
+	 * Open Google Maps app/website with directions
+	 */
+	function getDirections() {
+		if (userLocation) {
+			// Open Google Maps with route from user location to restaurant
+			const url = `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${RESTAURANT_LAT},${RESTAURANT_LNG}&travelmode=driving`;
+			window.open(url, '_blank');
+		} else {
+			// If location not detected, just open Google Maps to the restaurant
+			alert('Please allow location access to get personalized directions.\n\nOpening restaurant location instead...');
+			openInGoogleMaps();
+		}
+	}
+
+	/**
+	 * Open restaurant location in Google Maps
+	 */
+	function openInGoogleMaps() {
+		const url = `https://www.google.com/maps/search/?api=1&query=${RESTAURANT_LAT},${RESTAURANT_LNG}`;
+		window.open(url, '_blank');
+	}
+</script>
 </body>
 </html>

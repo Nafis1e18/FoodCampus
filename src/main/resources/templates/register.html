@@ -1,122 +1,463 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:replace="~{base::layout(~{::section})}">
+	  th:replace="~{base::layout(~{::section})}">
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+	<meta charset="ISO-8859-1">
+	<title>Register - FoodCampus</title>
 </head>
 <body>
-	<section>
-		<div class="container mt-5 p-5">
-			<div class="row">
-				<div class="col-md-5 p-5">
-					<img alt="" src="img/ecom.png" width="100%" height="400px">
+<section>
+	<!-- Elegant Gradient Background -->
+	<div class="container-fluid" style="min-height: 100vh; background: linear-gradient(135deg, #606c88 0%, #3f4c6b 100%); padding: 80px 0;">
+		<div class="container">
+			<div class="row align-items-center justify-content-center" style="min-height: 80vh;">
+
+				<!-- Left Side - Welcome Section -->
+				<div class="col-lg-5 col-md-6 mb-4 mb-md-0">
+					<div class="text-center text-white" style="animation: fadeInLeft 1s ease-in-out;">
+						<!-- Logo/Brand Section -->
+						<div class="mb-4">
+							<i class="fa-solid fa-user-plus" style="font-size: 5rem; animation: bounce 2s infinite; color: #f8f9fa;"></i>
+						</div>
+
+						<h1 class="display-4 fw-bold mb-3" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+							Join FoodCampus! ?
+						</h1>
+						<p class="lead mb-4" style="font-size: 1.3rem; opacity: 0.95;">
+							Create your account and start ordering delicious food
+						</p>
+
+						<!-- Benefits List -->
+						<div class="text-start mt-5" style="max-width: 400px; margin: 0 auto;">
+							<div class="mb-3 d-flex align-items-center" style="animation: fadeInUp 1s ease-in-out 0.2s both;">
+								<div class="me-3" style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+									<i class="fa-solid fa-check fa-2x"></i>
+								</div>
+								<div>
+									<h6 class="mb-0 fw-bold">Fast Registration</h6>
+									<small style="opacity: 0.9;">Create account in minutes</small>
+								</div>
+							</div>
+
+							<div class="mb-3 d-flex align-items-center" style="animation: fadeInUp 1s ease-in-out 0.4s both;">
+								<div class="me-3" style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+									<i class="fa-solid fa-shield-halved fa-2x"></i>
+								</div>
+								<div>
+									<h6 class="mb-0 fw-bold">Secure & Private</h6>
+									<small style="opacity: 0.9;">Your data is protected</small>
+								</div>
+							</div>
+
+							<div class="mb-3 d-flex align-items-center" style="animation: fadeInUp 1s ease-in-out 0.6s both;">
+								<div class="me-3" style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+									<i class="fa-solid fa-gift fa-2x"></i>
+								</div>
+								<div>
+									<h6 class="mb-0 fw-bold">Exclusive Offers</h6>
+									<small style="opacity: 0.9;">Get special discounts</small>
+								</div>
+							</div>
+						</div>
+
+						<!-- Decorative Image -->
+						<div class="mt-5" style="animation: float 3s ease-in-out infinite;">
+							<img alt="Food Campus"
+								 src="img/ecom.png"
+								 class="img-fluid"
+								 style="max-height: 250px; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3)); border-radius: 15px;">
+						</div>
+					</div>
 				</div>
-				<div class="col-md-7 p-2">
-					<div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
-						<div class="card-header text-center">
-							<p class="fs-4 text-center">Register</p>
+
+				<!-- Right Side - Registration Form -->
+				<div class="col-lg-7 col-md-6">
+					<div class="card border-0 shadow-lg"
+						 style="border-radius: 20px; overflow: hidden; animation: fadeInRight 1s ease-in-out; backdrop-filter: blur(10px); background: rgba(255,255,255,0.98);">
+
+						<!-- Card Header -->
+						<div class="card-header text-white text-center border-0"
+							 style="background: linear-gradient(135deg, #868f96 0%, #596164 100%); padding: 25px;">
+							<h3 class="mb-0 fw-bold">
+								<i class="fa-solid fa-user-plus"></i> Create Account
+							</h3>
+							<p class="mb-0 mt-2" style="opacity: 0.9;">Fill in the details to get started</p>
+						</div>
+
+						<!-- Alert Messages -->
+						<div class="px-4 pt-3">
+							<!-- Success Alert -->
 							<th:block th:if="${session.succMsg}">
-								<p class="text-success fw-bold">[[${session.succMsg}]]</p>
+								<div class="alert alert-success alert-dismissible fade show"
+									 role="alert"
+									 style="border-radius: 10px; border-left: 4px solid #28a745;">
+									<i class="fa-solid fa-check-circle"></i>
+									<strong>Success!</strong> [[${session.succMsg}]]
+									<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+								</div>
 								<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
 							</th:block>
 
+							<!-- Error Alert -->
 							<th:block th:if="${session.errorMsg}">
-								<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+								<div class="alert alert-danger alert-dismissible fade show"
+									 role="alert"
+									 style="border-radius: 10px; border-left: 4px solid #dc3545;">
+									<i class="fa-solid fa-exclamation-circle"></i>
+									<strong>Error!</strong> [[${session.errorMsg}]]
+									<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+								</div>
 								<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
 							</th:block>
 						</div>
-						<div class="card-body">
-							<form action="/saveUser" enctype="multipart/form-data" id="userRegister" novalidate
-								method="post">
-								<div class="row">
-									<div class="col">
-										<label class="form-label">Full Name</label> <input required
-											class="form-control" name="name" type="text">
+
+						<!-- Card Body - Registration Form -->
+						<div class="card-body p-4" style="max-height: 600px; overflow-y: auto;">
+							<form action="/saveUser" enctype="multipart/form-data" id="userRegister" novalidate method="post">
+
+								<!-- Row 1: Full Name & Mobile -->
+								<div class="row g-3 mb-3">
+									<div class="col-md-6">
+										<label class="form-label fw-bold" style="color: #495057;">
+											<i class="fa-solid fa-user"></i> Full Name
+										</label>
+										<input required
+											   class="form-control form-control-lg"
+											   name="name"
+											   type="text"
+											   placeholder="Enter your full name"
+											   style="border: 2px solid #dee2e6; border-radius: 10px; transition: all 0.3s ease;"
+											   onfocus="this.style.borderColor='#6c757d'; this.style.boxShadow='0 0 0 0.2rem rgba(108, 117, 125, 0.25)';"
+											   onblur="this.style.borderColor='#dee2e6'; this.style.boxShadow='none';">
 									</div>
 
-									<div class="col">
-										<label class="form-label">Mobile Number</label> <input
-											required class="form-control" name="mobileNumber"
-											type="number">
+									<div class="col-md-6">
+										<label class="form-label fw-bold" style="color: #495057;">
+											<i class="fa-solid fa-mobile-screen"></i> Mobile Number
+										</label>
+										<input required
+											   class="form-control form-control-lg"
+											   name="mobileNumber"
+											   type="tel"
+											   placeholder="Enter mobile number"
+											   style="border: 2px solid #dee2e6; border-radius: 10px; transition: all 0.3s ease;"
+											   onfocus="this.style.borderColor='#6c757d'; this.style.boxShadow='0 0 0 0.2rem rgba(108, 117, 125, 0.25)';"
+											   onblur="this.style.borderColor='#dee2e6'; this.style.boxShadow='none';">
 									</div>
-
 								</div>
 
+								<!-- Email -->
 								<div class="mb-3">
-									<label class="form-label">Email</label> <input required
-										class="form-control" name="email" type="email">
+									<label class="form-label fw-bold" style="color: #495057;">
+										<i class="fa-solid fa-envelope"></i> Email Address
+									</label>
+									<input required
+										   class="form-control form-control-lg"
+										   name="email"
+										   type="email"
+										   placeholder="your.email@example.com"
+										   style="border: 2px solid #dee2e6; border-radius: 10px; transition: all 0.3s ease;"
+										   onfocus="this.style.borderColor='#6c757d'; this.style.boxShadow='0 0 0 0.2rem rgba(108, 117, 125, 0.25)';"
+										   onblur="this.style.borderColor='#dee2e6'; this.style.boxShadow='none';">
 								</div>
 
-
-								<div class="row">
-									<div class="col">
-										<label class="form-label">Address</label> <input required
-											class="form-control" name="address" type="text">
+								<!-- Row 2: Address & City -->
+								<div class="row g-3 mb-3">
+									<div class="col-md-6">
+										<label class="form-label fw-bold" style="color: #495057;">
+											<i class="fa-solid fa-location-dot"></i> Address
+										</label>
+										<input required
+											   class="form-control form-control-lg"
+											   name="address"
+											   type="text"
+											   placeholder="Street address"
+											   style="border: 2px solid #dee2e6; border-radius: 10px; transition: all 0.3s ease;"
+											   onfocus="this.style.borderColor='#6c757d'; this.style.boxShadow='0 0 0 0.2rem rgba(108, 117, 125, 0.25)';"
+											   onblur="this.style.borderColor='#dee2e6'; this.style.boxShadow='none';">
 									</div>
 
-									<div class="col">
-										<label class="form-label">City</label> <input required
-											class="form-control" name="city" type="text">
+									<div class="col-md-6">
+										<label class="form-label fw-bold" style="color: #495057;">
+											<i class="fa-solid fa-city"></i> City
+										</label>
+										<input required
+											   class="form-control form-control-lg"
+											   name="city"
+											   type="text"
+											   placeholder="Your city"
+											   style="border: 2px solid #dee2e6; border-radius: 10px; transition: all 0.3s ease;"
+											   onfocus="this.style.borderColor='#6c757d'; this.style.boxShadow='0 0 0 0.2rem rgba(108, 117, 125, 0.25)';"
+											   onblur="this.style.borderColor='#dee2e6'; this.style.boxShadow='none';">
 									</div>
-
 								</div>
 
-								<div class="row">
-									<div class="col">
-										<label class="form-label">State</label> <input required
-											class="form-control" name="state" type="text">
+								<!-- Row 3: State & Pincode -->
+								<div class="row g-3 mb-3">
+									<div class="col-md-6">
+										<label class="form-label fw-bold" style="color: #495057;">
+											<i class="fa-solid fa-map"></i> State
+										</label>
+										<input required
+											   class="form-control form-control-lg"
+											   name="state"
+											   type="text"
+											   placeholder="Your state"
+											   style="border: 2px solid #dee2e6; border-radius: 10px; transition: all 0.3s ease;"
+											   onfocus="this.style.borderColor='#6c757d'; this.style.boxShadow='0 0 0 0.2rem rgba(108, 117, 125, 0.25)';"
+											   onblur="this.style.borderColor='#dee2e6'; this.style.boxShadow='none';">
 									</div>
 
-									<div class="col">
-										<label class="form-label">Pincode</label> <input required
-											class="form-control" name="pincode" type="number">
+									<div class="col-md-6">
+										<label class="form-label fw-bold" style="color: #495057;">
+											<i class="fa-solid fa-map-pin"></i> Pincode
+										</label>
+										<input required
+											   class="form-control form-control-lg"
+											   name="pincode"
+											   type="number"
+											   placeholder="ZIP/Postal code"
+											   style="border: 2px solid #dee2e6; border-radius: 10px; transition: all 0.3s ease;"
+											   onfocus="this.style.borderColor='#6c757d'; this.style.boxShadow='0 0 0 0.2rem rgba(108, 117, 125, 0.25)';"
+											   onblur="this.style.borderColor='#dee2e6'; this.style.boxShadow='none';">
 									</div>
-
 								</div>
 
-
-								<div class="row">
-									<div class="col">
-										<label class="form-label">Password</label> <input required
-											class="form-control" name="password" type="password" id="pass">
+								<!-- Row 4: Password & Confirm Password -->
+								<div class="row g-3 mb-3">
+									<div class="col-md-6">
+										<label class="form-label fw-bold" style="color: #495057;">
+											<i class="fa-solid fa-lock"></i> Password
+										</label>
+										<div class="input-group">
+											<input required
+												   class="form-control form-control-lg"
+												   name="password"
+												   type="password"
+												   id="pass"
+												   placeholder="Create password"
+												   style="border: 2px solid #dee2e6; border-right: none; border-radius: 10px 0 0 10px; transition: all 0.3s ease;"
+												   onfocus="this.style.borderColor='#6c757d'; this.style.boxShadow='0 0 0 0.2rem rgba(108, 117, 125, 0.25)';"
+												   onblur="this.style.borderColor='#dee2e6'; this.style.boxShadow='none';">
+											<button class="btn"
+													type="button"
+													onclick="togglePassword('pass', 'toggleIcon1')"
+													style="border: 2px solid #dee2e6; border-left: none; background: white; border-radius: 0 10px 10px 0;">
+												<i class="fa-solid fa-eye" id="toggleIcon1"></i>
+											</button>
+										</div>
 									</div>
 
-									<div class="col">
-										<label class="form-label">Confirm Password</label> <input
-											required class="form-control" name="confirmpassword"
-											type="password">
+									<div class="col-md-6">
+										<label class="form-label fw-bold" style="color: #495057;">
+											<i class="fa-solid fa-check-double"></i> Confirm Password
+										</label>
+										<div class="input-group">
+											<input required
+												   class="form-control form-control-lg"
+												   name="confirmpassword"
+												   type="password"
+												   id="confirmPass"
+												   placeholder="Confirm password"
+												   style="border: 2px solid #dee2e6; border-right: none; border-radius: 10px 0 0 10px; transition: all 0.3s ease;"
+												   onfocus="this.style.borderColor='#6c757d'; this.style.boxShadow='0 0 0 0.2rem rgba(108, 117, 125, 0.25)';"
+												   onblur="this.style.borderColor='#dee2e6'; this.style.boxShadow='none';">
+											<button class="btn"
+													type="button"
+													onclick="togglePassword('confirmPass', 'toggleIcon2')"
+													style="border: 2px solid #dee2e6; border-left: none; background: white; border-radius: 0 10px 10px 0;">
+												<i class="fa-solid fa-eye" id="toggleIcon2"></i>
+											</button>
+										</div>
 									</div>
-
 								</div>
 
-
-
+								<!-- Profile Image -->
 								<div class="mb-3">
-									<label class="form-label">Profile Image</label> <input
-										class="form-control" name="img" type="file">
+									<label class="form-label fw-bold" style="color: #495057;">
+										<i class="fa-solid fa-image"></i> Profile Image (Optional)
+									</label>
+									<input class="form-control form-control-lg"
+										   name="img"
+										   type="file"
+										   accept="image/*"
+										   style="border: 2px solid #dee2e6; border-radius: 10px;">
+									<small class="text-muted">
+										<i class="fa-solid fa-info-circle"></i> JPG, PNG, GIF (Max 5MB)
+									</small>
 								</div>
 
+								<!-- Terms & Conditions -->
+								<div class="form-check mb-3">
+									<input class="form-check-input" type="checkbox" id="terms" required>
+									<label class="form-check-label" for="terms" style="color: #6c757d;">
+										I agree to the <a href="#" style="color: #495057; text-decoration: none; font-weight: 600;">Terms & Conditions</a>
+									</label>
+								</div>
 
+								<!-- Register Button -->
+								<div class="d-grid mb-3">
+									<button type="submit"
+											class="btn btn-lg fw-bold"
+											style="background: linear-gradient(135deg, #868f96 0%, #596164 100%);
+                                              color: white;
+                                              border: none;
+                                              border-radius: 10px;
+                                              padding: 15px;
+                                              box-shadow: 0 5px 15px rgba(89, 97, 100, 0.4);
+                                              transition: all 0.3s ease;"
+											onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(89, 97, 100, 0.6)';"
+											onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 15px rgba(89, 97, 100, 0.4)';">
+										<i class="fa-solid fa-user-plus"></i> Create Account
+									</button>
+								</div>
 
+								<!-- Social Registration (Optional) -->
+								<div class="text-center my-3">
+									<span class="text-muted" style="font-size: 0.9rem;">or register with</span>
+								</div>
 
-
-
-								<button type="submit"
-									class="btn bg-primary text-white col-md-12">Register</button>
+								<div class="row g-2">
+									<div class="col-6">
+										<button type="button"
+												class="btn btn-outline-secondary w-100"
+												style="border-radius: 10px; transition: all 0.3s ease;"
+												onmouseover="this.style.background='#6c757d'; this.style.color='white'; this.style.borderColor='#6c757d';"
+												onmouseout="this.style.background='white'; this.style.color='#6c757d'; this.style.borderColor='#6c757d';">
+											<i class="fa-brands fa-google"></i> Google
+										</button>
+									</div>
+									<div class="col-6">
+										<button type="button"
+												class="btn btn-outline-secondary w-100"
+												style="border-radius: 10px; transition: all 0.3s ease;"
+												onmouseover="this.style.background='#6c757d'; this.style.color='white'; this.style.borderColor='#6c757d';"
+												onmouseout="this.style.background='white'; this.style.color='#6c757d'; this.style.borderColor='#6c757d';">
+											<i class="fa-brands fa-facebook"></i> Facebook
+										</button>
+									</div>
+								</div>
 							</form>
 						</div>
 
-						<div class="card-footer text-center">
-
-							have an account ? <a href="/login" class="text-decoration-none">Login
-							</a>
+						<!-- Card Footer -->
+						<div class="card-footer text-center bg-light border-0" style="padding: 20px;">
+							<p class="mb-0" style="color: #6c757d;">
+								Already have an account?
+								<a href="/signin"
+								   class="text-decoration-none fw-bold"
+								   style="color: #495057; transition: all 0.3s ease;"
+								   onmouseover="this.style.color='#343a40';"
+								   onmouseout="this.style.color='#495057';">
+									Login <i class="fa-solid fa-arrow-right"></i>
+								</a>
+							</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
-	</section>
+	<!-- Custom CSS Animations -->
+	<style>
+		@keyframes fadeInLeft {
+			from {
+				opacity: 0;
+				transform: translateX(-50px);
+			}
+			to {
+				opacity: 1;
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes fadeInRight {
+			from {
+				opacity: 0;
+				transform: translateX(50px);
+			}
+			to {
+				opacity: 1;
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes fadeInUp {
+			from {
+				opacity: 0;
+				transform: translateY(30px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes bounce {
+			0%, 20%, 50%, 80%, 100% {
+				transform: translateY(0);
+			}
+			40% {
+				transform: translateY(-20px);
+			}
+			60% {
+				transform: translateY(-10px);
+			}
+		}
+
+		@keyframes float {
+			0%, 100% {
+				transform: translateY(0px);
+			}
+			50% {
+				transform: translateY(-15px);
+			}
+		}
+
+		/* Custom Scrollbar */
+		.card-body::-webkit-scrollbar {
+			width: 8px;
+		}
+
+		.card-body::-webkit-scrollbar-track {
+			background: #f1f1f1;
+			border-radius: 10px;
+		}
+
+		.card-body::-webkit-scrollbar-thumb {
+			background: #868f96;
+			border-radius: 10px;
+		}
+
+		.card-body::-webkit-scrollbar-thumb:hover {
+			background: #596164;
+		}
+
+		/* Input Focus */
+		.form-control:focus {
+			border-color: #6c757d !important;
+			box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25) !important;
+		}
+	</style>
+
+	<!-- Password Toggle Script -->
+	<script>
+		function togglePassword(fieldId, iconId) {
+			const passwordField = document.getElementById(fieldId);
+			const toggleIcon = document.getElementById(iconId);
+
+			if (passwordField.type === 'password') {
+				passwordField.type = 'text';
+				toggleIcon.classList.remove('fa-eye');
+				toggleIcon.classList.add('fa-eye-slash');
+			} else {
+				passwordField.type = 'password';
+				toggleIcon.classList.remove('fa-eye-slash');
+				toggleIcon.classList.add('fa-eye');
+			}
+		}
+	</script>
+</section>
 </body>
 </html>
