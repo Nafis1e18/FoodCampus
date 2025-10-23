@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base::layout(~{::section})}">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Your Personalized Food Recommendations</title>
+    <style>
+        .health-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .bmi-badge {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+        }
+        .ai-analysis {
+            background: white;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .product-card {
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        .product-img {
+            height: 220px;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
+        }
+    </style>
+</head>
+<body>
+<section>
+    <div class="container-fluid" style="margin-top: 70px; min-height: 600px;">
+
+        <!-- Health Summary Card -->
+        <div class="health-summary">
+            <div class="text-center mb-3">
+                <h2><i class="fa-solid fa-user-check"></i> Your Health Profile</h2>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-2">
+                    <h5>Age</h5>
+                    <p class="fs-4"><strong th:text="${healthData.age}"></strong> years</p>
+                </div>
+                <div class="col-md-2">
+                    <h5>Height</h5>
+                    <p class="fs-4"><strong th:text="${healthData.height}"></strong> cm</p>
+                </div>
+                <div class="col-md-2">
+                    <h5>Weight</h5>
+                    <p class="fs-4"><strong th:text="${healthData.weight}"></strong> kg</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>BMI</h5>
+                    <p class="fs-4">
+                        <strong th:text="${#numbers.formatDecimal(bmi, 1, 2)}"></strong>
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Status</h5>
+                    <span class="badge bmi-badge"
+                          th:classappend="${bmiCategory == 'Normal weight'} ? 'bg-success' :
+                                         (${bmiCategory == 'Underweight'} ? 'bg-warning' : 'bg-danger')"
+                          th:text="${bmiCategory}"></span>
+                </div>
+            </div>
+            <div class="row mt-3" th:if="${healthData.disease != null and !#strings.isEmpty(healthData.disease)}">
+                <div class="col-12 text-center">
+                    <h5><i class="fa-solid fa-notes-medical"></i> Health Conditions</h5>
+                    <p class="fs-5" th:text="${healthData.disease}"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Analysis Section -->
+        <div class="ai-analysis">
+            <h4 class="mb-3">
+                <i class="fa-solid fa-robot"></i> AI-Powered Nutritional Analysis
+            </h4>
+            <div th:utext="${#strings.replace(analysis, '&#10;', '<br>')}"></div>
+        </div>
+
+        <!-- Recommended Products -->
+        <h3 class="text-center text-primary mb-4">
+            <i class="fa-solid fa-star"></i>
+            Your Personalized Food Recommendations
+        </h3>
+
+        <div class="row" th:if="${recommendations != null and !recommendations.isEmpty()}">
+            <div class="col-lg-4 col-md-6 mb-4" th:each="product : ${recommendations}">
+                <div class="card product-card">
+                    <img th:src="@{${product.imageUrl}}"
+                         th:alt="${product.title}"
+                         class="product-img"
+                         onerror="this.src='https://via.placeholder.com/400x220?text=No+Image'">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-primary" th:text="${product.title}"></h5>
+                        <p class="card-text flex-grow-1" th:text="${product.description}"></p>
+
+                        <div class="mb-3">
+                            <span class="badge bg-info" th:text="${product.category}"></span>
+                            <span class="badge bg-success"
+                                  th:if="${product.dietaryTags}"
+                                  th:text="${product.dietaryTags}"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <span class="text-muted"
+                                      th:if="${product.price != null and product.discountPrice != null and product.price > product.discountPrice}"
+                                      style="text-decoration: line-through;">
+                                    BDT <span th:text="${#numbers.formatDecimal(product.price, 1, 2)}"></span>
+                                </span>
+                                <span class="text-primary fw-bold fs-5">
+                                    BDT <span th:text="${#numbers.formatDecimal(product.effectivePrice, 1, 2)}"></span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="small text-muted" th:if="${product.healthBenefits}">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                            <strong>Benefits:</strong>
+                            <span th:text="${product.healthBenefits}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Recommendations Message -->
+        <div class="alert alert-warning text-center"
+             th:if="${recommendations == null or recommendations.isEmpty()}">
+            <i class="fa-solid fa-circle-info fs-3"></i>
+            <h4 class="mt-3">No specific recommendations found</h4>
+            <p>Please try adjusting your health profile or browse all our products.</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center my-5">
+            <a href="/recommendations/suggest-me" class="btn btn-primary btn-lg mx-2">
+                <i class="fa-solid fa-rotate-right"></i> Try Again
+            </a>
+            <a href="/products" class="btn btn-outline-secondary btn-lg mx-2">
+                <i class="fa-solid fa-grid"></i> Browse All Products
+            </a>
+        </div>
+    </div>
+</section>
+</body>
+</html>

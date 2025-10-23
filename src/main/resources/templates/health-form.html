@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base::layout(~{::section})}">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Get Personalized Food Recommendations</title>
+</head>
+<body>
+<section>
+    <div class="container-fluid" style="margin-top: 80px; min-height: 600px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="row justify-content-center py-5">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg" style="border-radius: 15px;">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h2 class="text-primary">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                                Get Your Personalized Food Recommendations
+                            </h2>
+                            <p class="text-muted">
+                                Fill in your health information and let our AI recommend the best food for you!
+                            </p>
+                        </div>
+
+                        <!-- Error Alert -->
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span th:text="${error}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <!-- Health Form -->
+                        <form th:action="@{/recommendations/suggest-me}"
+                              th:object="${healthForm}"
+                              method="post">
+
+                            <div class="row">
+                                <!-- Height -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="height" class="form-label fw-bold">
+                                        <i class="fa-solid fa-ruler-vertical"></i> Height (cm) *
+                                    </label>
+                                    <input type="number" step="0.1"
+                                           class="form-control"
+                                           id="height"
+                                           th:field="*{height}"
+                                           th:classappend="${#fields.hasErrors('height')} ? 'is-invalid' : ''"
+                                           placeholder="e.g., 170">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('height')}"
+                                         th:errors="*{height}"></div>
+                                </div>
+
+                                <!-- Weight -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="weight" class="form-label fw-bold">
+                                        <i class="fa-solid fa-weight-scale"></i> Weight (kg) *
+                                    </label>
+                                    <input type="number" step="0.1"
+                                           class="form-control"
+                                           id="weight"
+                                           th:field="*{weight}"
+                                           th:classappend="${#fields.hasErrors('weight')} ? 'is-invalid' : ''"
+                                           placeholder="e.g., 65">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('weight')}"
+                                         th:errors="*{weight}"></div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Age -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="age" class="form-label fw-bold">
+                                        <i class="fa-solid fa-calendar-days"></i> Age *
+                                    </label>
+                                    <input type="number"
+                                           class="form-control"
+                                           id="age"
+                                           th:field="*{age}"
+                                           th:classappend="${#fields.hasErrors('age')} ? 'is-invalid' : ''"
+                                           placeholder="e.g., 25">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('age')}"
+                                         th:errors="*{age}"></div>
+                                </div>
+
+                                <!-- Location -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="location" class="form-label fw-bold">
+                                        <i class="fa-solid fa-location-dot"></i> Location *
+                                    </label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="location"
+                                           th:field="*{location}"
+                                           th:classappend="${#fields.hasErrors('location')} ? 'is-invalid' : ''"
+                                           placeholder="e.g., Dhaka, Bangladesh">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('location')}"
+                                         th:errors="*{location}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Disease/Health Condition -->
+                            <div class="mb-4">
+                                <label for="disease" class="form-label fw-bold">
+                                    <i class="fa-solid fa-notes-medical"></i> Health Conditions (Optional)
+                                </label>
+                                <textarea class="form-control"
+                                          id="disease"
+                                          th:field="*{disease}"
+                                          th:classappend="${#fields.hasErrors('disease')} ? 'is-invalid' : ''"
+                                          rows="3"
+                                          placeholder="Enter any health conditions, diseases, or dietary restrictions (e.g., diabetes, hypertension, food allergies, etc.)"></textarea>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('disease')}"
+                                     th:errors="*{disease}"></div>
+                                <small class="form-text text-muted">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                    This helps our AI provide more accurate and personalized recommendations
+                                </small>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Get My Recommendations
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
