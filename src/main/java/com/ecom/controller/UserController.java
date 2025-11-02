@@ -20,7 +20,6 @@ import com.ecom.model.Category;
 import com.ecom.model.OrderRequest;
 import com.ecom.model.ProductOrder;
 import com.ecom.model.UserDtls;
-import com.ecom.repository.UserRepository;
 import com.ecom.service.CartService;
 import com.ecom.service.CategoryService;
 import com.ecom.service.OrderService;

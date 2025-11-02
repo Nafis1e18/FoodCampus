@@ -17,14 +17,112 @@
             font-size: 1.2rem;
             padding: 10px 20px;
         }
-        .ai-analysis {
-            background: white;
-            padding: 25px;
-            border-left: 5px solid #667eea;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+        /* ? NEW ENHANCED AI ANALYSIS STYLES */
+        .ai-analysis-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
+
+        .ai-analysis-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-bottom: 3px solid rgba(255,255,255,0.2);
+        }
+
+        .ai-analysis-header h4 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .ai-analysis-header i {
+            margin-right: 10px;
+            font-size: 1.6rem;
+        }
+
+        .ai-analysis-content {
+            padding: 30px;
+            background: white;
+        }
+
+        .analysis-intro {
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #00acc1;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .analysis-intro p {
+            margin: 0;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #00695c;
+            font-weight: 500;
+        }
+
+        .recommendation-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .recommendation-item:hover {
+            transform: translateX(10px);
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .recommendation-icon {
+            font-size: 1.5rem;
+            color: #667eea;
+            margin-right: 12px;
+            min-width: 30px;
+        }
+
+        .recommendation-title {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin: 0;
+            flex: 1;
+        }
+
+        .recommendation-description {
+            color: #555;
+            line-height: 1.7;
+            margin: 0;
+            padding-left: 42px;
+            font-size: 1rem;
+        }
+
+        .analysis-note {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ff9800;
+            margin-bottom: 15px;
+            color: #e65100;
+            font-weight: 500;
+        }
+
+        /* Product cards - keep existing styles */
         .product-card {
             transition: all 0.3s ease;
             margin-bottom: 25px;
@@ -42,6 +140,7 @@
             border-radius: 10px 10px 0 0;
         }
     </style>
+
 </head>
 <body>
 <section>
@@ -87,13 +186,6 @@
             </div>
         </div>
 
-        <!-- AI Analysis Section -->
-        <div class="ai-analysis">
-            <h4 class="mb-3">
-                <i class="fa-solid fa-robot"></i> AI-Powered Nutritional Analysis
-            </h4>
-            <div th:utext="${#strings.replace(analysis, '&#10;', '<br>')}"></div>
-        </div>
 
         <!-- Recommended Products -->
         <h3 class="text-center text-primary mb-4">
