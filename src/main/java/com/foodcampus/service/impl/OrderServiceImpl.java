@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.foodcampus.dto.TopProductDTO;
+import com.foodcampus.dto.TopUserDTO;
 import com.foodcampus.model.Cart;
 import com.foodcampus.model.OrderAddress;
 import com.foodcampus.model.OrderRequest;
@@ -131,6 +133,18 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public ProductOrder getOrdersByOrderId(String orderId) {
 		return orderRepository.findByOrderId(orderId);
+	}
+
+	@Override
+	public List<TopProductDTO> getTopProducts(int limit) {
+		Pageable p = PageRequest.of(0, Math.max(1, limit));
+		return orderRepository.findTopProducts(p);
+	}
+
+	@Override
+	public List<TopUserDTO> getTopUsers(int limit) {
+		Pageable p = PageRequest.of(0, Math.max(1, limit));
+		return orderRepository.findTopUsers(p);
 	}
 
 }

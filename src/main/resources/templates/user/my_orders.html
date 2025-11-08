@@ -38,8 +38,7 @@
 								<td>[[${o.orderDate}]]</td>
 								<td>[[${o.product.title}]]</td>
 								<td>Quantity : [[${o.quantity}]] <br>Price :
-									[[${o.price}]] <br>Total Price :[[${o.quantity *
-									o.price}]]
+									[[${o.price}]] <br>Total Price :[[${(o.quantity != null ? o.quantity : 0) * (o.price != null ? o.price : 0)}]]
 								</td>
 								<td>[[${o.status}]]</td>
 								<td><th:block th:if="${o.status!='Cancelled'}">

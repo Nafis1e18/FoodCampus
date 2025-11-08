@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.foodcampus.dto.TopProductDTO;
+import com.foodcampus.dto.TopUserDTO;
 import com.foodcampus.model.Category;
 import com.foodcampus.model.Product;
 import com.foodcampus.model.ProductOrder;
@@ -63,6 +66,9 @@ public class AdminController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	@ModelAttribute
 	public void getUserDetails(Principal p, Model m) {
 		if (p != null) {
@@ -78,7 +84,31 @@ public class AdminController {
 	}
 
 	@GetMapping("/")
-	public String index() {
+	public String index(Model m) {
+		// Provide top lists for inline charts on admin home page
+		try {
+			List<TopProductDTO> topProducts = orderService.getTopProducts(10);
+			List<TopUserDTO> topUsers = orderService.getTopUsers(10);
+			m.addAttribute("topProducts", topProducts);
+			m.addAttribute("topUsers", topUsers);
+			// also add JSON serialized versions for safe JS inlining
+			try {
+				String tpJson = objectMapper.writeValueAsString(topProducts == null ? java.util.Collections.emptyList() : topProducts);
+				String tuJson = objectMapper.writeValueAsString(topUsers == null ? java.util.Collections.emptyList() : topUsers);
+				m.addAttribute("topProductsJson", tpJson);
+				m.addAttribute("topUsersJson", tuJson);
+			} catch (Exception je) {
+				m.addAttribute("topProductsJson", "[]");
+				m.addAttribute("topUsersJson", "[]");
+			}
+		} catch (Exception e) {
+			// In case of any error, log and continue so admin page still loads
+			System.err.println("Unable to load reports data for admin index: " + e.getMessage());
+			m.addAttribute("topProducts", java.util.Collections.emptyList());
+			m.addAttribute("topUsers", java.util.Collections.emptyList());
+			m.addAttribute("topProductsJson", "[]");
+			m.addAttribute("topUsersJson", "[]");
+		}
 		return "admin/index";
 	}
 
@@ -511,6 +541,15 @@ public class AdminController {
 			model.addAttribute("message", "Error uploading image.");
 		}
 		return "admin/add_product";
+	}
+
+	@GetMapping("/reports")
+	public String reports(Model m, @RequestParam(name = "top", defaultValue = "20") Integer top) {
+		List<TopProductDTO> topProducts = orderService.getTopProducts(top);
+		List<TopUserDTO> topUsers = orderService.getTopUsers(top);
+		m.addAttribute("topProducts", topProducts);
+		m.addAttribute("topUsers", topUsers);
+		return "admin/reports";
 	}
 
 }

@@ -193,9 +193,238 @@
                     </div>
                 </a>
             </div>
+            <!-- Inline reports charts: Top Products and Top Users -->
+            <div class="col-12 mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">Top products: <span th:text="${topProducts != null} ? ${#lists.size(topProducts)} : 0">0</span></small>
+                        &nbsp;&nbsp;
+                        <small class="text-muted">Top users: <span th:text="${topUsers != null} ? ${#lists.size(topUsers)} : 0">0</span></small>
+                    </div>
+                    <div>
+                        <small class="text-secondary">(If charts are blank, see JSON below for server-supplied data)</small>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button id="toggle-debug" class="btn btn-sm btn-outline-secondary">Show debug JSON</button>
+                </div>
+                <pre id="debug-json" style="display:block; white-space:pre-wrap; word-break:break-word; background:#f8f9fb; padding:8px; border-radius:6px; margin-top:6px; max-height:240px; overflow:auto;" th:utext="${topProductsJson}"></pre>
+                <pre id="debug-json-users" style="display:block; white-space:pre-wrap; word-break:break-word; background:#f8f9fb; padding:8px; border-radius:6px; margin-top:6px; max-height:240px; overflow:auto;" th:utext="${topUsersJson}"></pre>
+            </div>
+            <div class="col-12 mt-4 mb-3">
+                <div class="card card-sh">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Top Products (by quantity sold)</h5>
+                                <canvas id="topProductsChart" style="width:100%;height:320px;"></canvas>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Top Users (by total spent)</h5>
+                                <canvas id="topUsersChart" style="width:100%;height:320px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
 </section>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+    // Robust loading: first try parsing JSON-string attributes; if parsing fails,
+    // fall back to Thymeleaf inlining of the list objects.
+    var topProducts;
+    var topUsers;
+    try {
+        topProducts = JSON.parse(/*[[${topProductsJson}]]*/ '[]');
+    } catch (e) {
+        try { topProducts = /*[[${topProducts}]]*/ []; } catch (e2) { topProducts = []; }
+    }
+    try {
+        topUsers = JSON.parse(/*[[${topUsersJson}]]*/ '[]');
+    } catch (e) {
+        try { topUsers = /*[[${topUsers}]]*/ []; } catch (e2) { topUsers = []; }
+    }
+
+    // Log data for debugging
+    try {
+        console.log('topProducts (server):', topProducts);
+        console.log('topUsers (server):', topUsers);
+    } catch (e) {
+        console.error('Error logging topProducts/topUsers:', e);
+    }
+
+    // Toggle debug JSON visibility and render charts after DOM ready
+    document.addEventListener('DOMContentLoaded', function(){
+        var btn = document.getElementById('toggle-debug');
+        var p1 = document.getElementById('debug-json');
+        var p2 = document.getElementById('debug-json-users');
+        if(btn) {
+            btn.addEventListener('click', function(){
+                var show = p1.style.display === 'none';
+                p1.style.display = show ? 'block' : 'none';
+                p2.style.display = show ? 'block' : 'none';
+                btn.textContent = show ? 'Hide debug JSON' : 'Show debug JSON';
+            });
+        }
+
+        // initial render attempt (after DOM ready so sizes are available)
+        renderCharts();
+
+        // If no data was supplied by Thymeleaf, fetch public debug endpoint and re-render
+        if ((!topProducts || topProducts.length === 0) && (!topUsers || topUsers.length === 0)) {
+            fetch('/debug/reports').then(function(resp){
+                if (!resp.ok) throw new Error('Network response was not ok');
+                return resp.json();
+            }).then(function(json){
+                if (json) {
+                    topProducts = json.topProducts || [];
+                    topUsers = json.topUsers || [];
+                    // update debug pre blocks
+                    if (p1) p1.textContent = JSON.stringify(topProducts, null, 2);
+                    if (p2) p2.textContent = JSON.stringify(topUsers, null, 2);
+                    renderCharts();
+                }
+            }).catch(function(err){
+                console.warn('Failed to fetch fallback reports:', err);
+            });
+        }
+    });
+
+    // Map to labels and data with safe fallbacks
+    var pLabels = (topProducts || []).map(function(p){ return (p.productTitle && p.productTitle.length>0) ? p.productTitle : ('Product #' + p.productId); });
+    var pData = (topProducts || []).map(function(p){ return p.totalQuantity != null ? p.totalQuantity : 0; });
+
+    var uLabels = (topUsers || []).map(function(u){ return (u.userName && u.userName.length>0) ? u.userName : ('User #' + u.userId); });
+    var uData = (topUsers || []).map(function(u){ return u.totalSpent != null ? u.totalSpent : 0; });
+
+    // Chart instances will be stored here so we can update them later
+    var topProductsChartInstance = null;
+    var topUsersChartInstance = null;
+
+    function renderCharts() {
+        // compute labels/data from current topProducts/topUsers
+        pLabels = (topProducts || []).map(function(p){ return (p.productTitle && p.productTitle.length>0) ? p.productTitle : ('Product #' + p.productId); });
+        pData = (topProducts || []).map(function(p){ return p.totalQuantity != null ? p.totalQuantity : 0; });
+
+        uLabels = (topUsers || []).map(function(u){ return (u.userName && u.userName.length>0) ? u.userName : ('User #' + u.userId); });
+        uData = (topUsers || []).map(function(u){ return u.totalSpent != null ? u.totalSpent : 0; });
+
+        // Top Products Chart
+        (function(){
+            try {
+                const canvas = document.getElementById('topProductsChart');
+                if (!canvas) return;
+
+                // Ensure canvas has proper internal pixel dimensions to avoid blurry/blank charts
+                var cssHeight = 320; // we used style height:320px
+                canvas.height = cssHeight * (window.devicePixelRatio || 1);
+                canvas.width = canvas.clientWidth * (window.devicePixelRatio || 1);
+
+                const ctx = canvas.getContext('2d');
+
+                console.log('Rendering TopProducts chart with labels=', pLabels, 'data=', pData);
+
+                if (topProductsChartInstance) {
+                    topProductsChartInstance.data.labels = pLabels;
+                    topProductsChartInstance.data.datasets[0].data = pData;
+                    topProductsChartInstance.update();
+                } else {
+                    topProductsChartInstance = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: pLabels,
+                            datasets: [{
+                                label: 'Quantity Sold',
+                                data: pData,
+                                backgroundColor: 'rgba(54,162,235,0.7)'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: { y: { beginAtZero: true } }
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('Error rendering TopProducts chart:', err);
+            }
+        })();
+
+        // Top Users Chart
+        (function(){
+            try {
+                const canvas = document.getElementById('topUsersChart');
+                if (!canvas) return;
+
+                var cssHeight = 320;
+                canvas.height = cssHeight * (window.devicePixelRatio || 1);
+                canvas.width = canvas.clientWidth * (window.devicePixelRatio || 1);
+
+                const ctx = canvas.getContext('2d');
+
+                console.log('Rendering TopUsers chart with labels=', uLabels, 'data=', uData);
+
+                if (topUsersChartInstance) {
+                    topUsersChartInstance.data.labels = uLabels;
+                    topUsersChartInstance.data.datasets[0].data = uData;
+                    topUsersChartInstance.update();
+                } else {
+                    topUsersChartInstance = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: uLabels,
+                            datasets: [{
+                                label: 'Total Spent',
+                                data: uData,
+                                backgroundColor: 'rgba(255,99,132,0.7)'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: { y: { beginAtZero: true } }
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('Error rendering TopUsers chart:', err);
+            }
+        })();
+    }
+
+    // initial render attempt
+    renderCharts();
+
+    // If no data was supplied by Thymeleaf, fetch public debug endpoint and re-render
+    if ((!topProducts || topProducts.length === 0) && (!topUsers || topUsers.length === 0)) {
+        fetch('/debug/reports').then(function(resp){
+            if (!resp.ok) throw new Error('Network response was not ok');
+            return resp.json();
+        }).then(function(json){
+            if (json) {
+                topProducts = json.topProducts || [];
+                topUsers = json.topUsers || [];
+                // update debug pre blocks
+                var p1 = document.getElementById('debug-json');
+                var p2 = document.getElementById('debug-json-users');
+                if (p1) p1.textContent = JSON.stringify(topProducts, null, 2);
+                if (p2) p2.textContent = JSON.stringify(topUsers, null, 2);
+                renderCharts();
+            }
+        }).catch(function(err){
+            console.warn('Failed to fetch fallback reports:', err);
+        });
+    }
+/*]]>*/
+</script>
+
 </body>
 </html>
