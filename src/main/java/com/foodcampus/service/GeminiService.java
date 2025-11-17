@@ -4,6 +4,7 @@ import com.foodcampus.dto.HealthFormDTO;
 import com.foodcampus.model.Product;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -118,7 +119,12 @@ public class GeminiService {
             requestBody.put("contents", contents);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                url, 
+                HttpMethod.POST, 
+                entity, 
+                new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 return extractTextFromResponse(response.getBody());

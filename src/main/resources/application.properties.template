@@ -1,16 +1,16 @@
 # Database Configuration
-spring.datasource.url=${DB_URL:jdbc:sqlserver://localhost:1433;databaseName=foodcampusDB;encrypt=false}
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=foodcampusDB;encrypt=false
 spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
-spring.datasource.username=${DB_USERNAME:sa}
-spring.datasource.password=${DB_PASSWORD:}
+spring.datasource.username=YOUR_DATABASE_USERNAME
+spring.datasource.password=YOUR_DATABASE_PASSWORD
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServerDialect
 spring.jpa.hibernate.ddl-auto=update
 
 # Email Configuration
-spring.mail.host=${MAIL_HOST:smtp.gmail.com}
-spring.mail.username=${MAIL_USERNAME:}
-spring.mail.password=${MAIL_PASSWORD:}
-spring.mail.port=${MAIL_PORT:587}
+spring.mail.host=smtp.gmail.com
+spring.mail.username=YOUR_EMAIL@gmail.com
+spring.mail.password=YOUR_EMAIL_APP_PASSWORD
+spring.mail.port=587
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
 
@@ -19,7 +19,7 @@ spring.servlet.multipart.max-file-size=50MB
 spring.servlet.multipart.max-request-size=50MB
 
 # Gemini API Configuration
-gemini.api.key=${GEMINI_API_KEY:}
+gemini.api.key=YOUR_GEMINI_API_KEY
 gemini.api.url=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
 
 # Thymeleaf Configuration
