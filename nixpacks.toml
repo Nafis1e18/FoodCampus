@@ -1,0 +1,9 @@
+[phases.setup]
+nixPkgs = ['maven', 'jdk17']
+
+[phases.build]
+cmds = ['mvn clean install -DskipTests']
+
+[start]
+cmd = 'java -jar -Dspring.profiles.active=prod target/FoodCampus-0.0.1-SNAPSHOT.jar'
+

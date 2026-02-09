@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: foodcampus
+    runtime: docker
+    envVars:
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PORT
+        value: 8080
+
+
